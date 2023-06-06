@@ -9,7 +9,7 @@ import (
 
 type ircTest struct {
 	Input    string
-	Expected ircMessage
+	Expected IrcMessage
 }
 
 func ircTests() ([]*ircTest, error) {
@@ -37,7 +37,7 @@ func TestCanParseIRCMessage(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		actual, err := parseIRCMessage(test.Input)
+		actual, err := ParseIRCMessage(test.Input)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -55,7 +55,7 @@ func TestCanParseIRCMessage(t *testing.T) {
 func TestCantParsePartialIRCMessage(t *testing.T) {
 	testMessage := "@badges=;color=;display-name=ZZZi;emotes=;flags=;id=75bb6b6b-e36c-49af-a293-16024738ab92;mod=0;room-id=36029255;subscriber=0;tmi-sent-ts=1551476573570;turbo"
 
-	actual, err := parseIRCMessage(testMessage)
+	actual, err := ParseIRCMessage(testMessage)
 
 	expectedTags := map[string]string{
 		"badges":       "",
@@ -84,7 +84,7 @@ func TestCantParsePartialIRCMessage(t *testing.T) {
 func TestCantParseNoCommandIRCMessage(t *testing.T) {
 	testMessage := "@badges=;color=#00FF7F;display-name=Danielps1;emotes=;message-id=20;thread-id=32591953_77829817;turbo=0;user-id=32591953;user-type= :danielps1!danielps1@danielps1.tmi.twitch.tv"
 
-	actual, err := parseIRCMessage(testMessage)
+	actual, err := ParseIRCMessage(testMessage)
 
 	expectedTags := map[string]string{
 		"badges":       "",

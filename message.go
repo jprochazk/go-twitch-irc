@@ -53,7 +53,7 @@ const (
 
 type messageTypeDescription struct {
 	Type   MessageType
-	Parser func(*ircMessage) Message
+	Parser func(*IrcMessage) Message
 }
 
 var messageTypeMap map[string]messageTypeDescription
@@ -97,7 +97,7 @@ func ParseMessage(line string) Message {
 	// Uncomment this and recoverMessage if debugging a message that crashes the parser
 	// defer recoverMessage(line)
 
-	ircMessage, err := parseIRCMessage(line)
+	ircMessage, err := ParseIRCMessage(line)
 	if err != nil {
 		return parseRawMessage(ircMessage)
 	}
@@ -126,7 +126,7 @@ func parseMessageType(messageType string) MessageType {
 	return UNSET
 }
 
-func parseUser(message *ircMessage) User {
+func parseUser(message *IrcMessage) User {
 	user := User{
 		ID:          message.Tags["user-id"],
 		Name:        message.Source.Username,
@@ -159,7 +159,7 @@ func parseBadges(rawBadges string) map[string]int {
 	return badges
 }
 
-func parseRawMessage(message *ircMessage) *RawMessage {
+func parseRawMessage(message *IrcMessage) *RawMessage {
 	rawMessage := RawMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -177,7 +177,7 @@ func parseRawMessage(message *ircMessage) *RawMessage {
 	return &rawMessage
 }
 
-func parseWhisperMessage(message *ircMessage) Message {
+func parseWhisperMessage(message *IrcMessage) Message {
 	whisperMessage := WhisperMessage{
 		User: parseUser(message),
 
@@ -205,7 +205,7 @@ func parseWhisperMessage(message *ircMessage) Message {
 	return &whisperMessage
 }
 
-func parsePrivateMessage(message *ircMessage) Message {
+func parsePrivateMessage(message *IrcMessage) Message {
 	var reply *Reply
 	if _, ok := message.Tags["reply-parent-msg-id"]; ok {
 		reply = &Reply{
@@ -264,7 +264,7 @@ func parsePrivateMessage(message *ircMessage) Message {
 	return &privateMessage
 }
 
-func parseClearChatMessage(message *ircMessage) Message {
+func parseClearChatMessage(message *IrcMessage) Message {
 	clearChatMessage := ClearChatMessage{
 		Raw:          message.Raw,
 		Type:         parseMessageType(message.Command),
@@ -290,7 +290,7 @@ func parseClearChatMessage(message *ircMessage) Message {
 	return &clearChatMessage
 }
 
-func parseClearMessage(message *ircMessage) Message {
+func parseClearMessage(message *IrcMessage) Message {
 	clearMessage := ClearMessage{
 		Raw:         message.Raw,
 		Type:        parseMessageType(message.Command),
@@ -309,7 +309,7 @@ func parseClearMessage(message *ircMessage) Message {
 	return &clearMessage
 }
 
-func parseRoomStateMessage(message *ircMessage) Message {
+func parseRoomStateMessage(message *IrcMessage) Message {
 	roomStateMessage := RoomStateMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -335,7 +335,7 @@ func parseRoomStateMessage(message *ircMessage) Message {
 	return &roomStateMessage
 }
 
-func parseGlobalUserStateMessage(message *ircMessage) Message {
+func parseGlobalUserStateMessage(message *IrcMessage) Message {
 	globalUserStateMessage := GlobalUserStateMessage{
 		Raw:       message.Raw,
 		Type:      parseMessageType(message.Command),
@@ -348,7 +348,7 @@ func parseGlobalUserStateMessage(message *ircMessage) Message {
 	return &globalUserStateMessage
 }
 
-func parseUserNoticeMessage(message *ircMessage) Message {
+func parseUserNoticeMessage(message *IrcMessage) Message {
 	userNoticeMessage := UserNoticeMessage{
 		User: parseUser(message),
 
@@ -380,7 +380,7 @@ func parseUserNoticeMessage(message *ircMessage) Message {
 	return &userNoticeMessage
 }
 
-func parseUserStateMessage(message *ircMessage) Message {
+func parseUserStateMessage(message *IrcMessage) Message {
 	userStateMessage := UserStateMessage{
 		User: parseUser(message),
 
@@ -395,7 +395,7 @@ func parseUserStateMessage(message *ircMessage) Message {
 	return &userStateMessage
 }
 
-func parseNoticeMessage(message *ircMessage) Message {
+func parseNoticeMessage(message *IrcMessage) Message {
 	noticeMessage := NoticeMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -413,7 +413,7 @@ func parseNoticeMessage(message *ircMessage) Message {
 	return &noticeMessage
 }
 
-func parseUserJoinMessage(message *ircMessage) Message {
+func parseUserJoinMessage(message *IrcMessage) Message {
 	parsedMessage := UserJoinMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -429,7 +429,7 @@ func parseUserJoinMessage(message *ircMessage) Message {
 	return &parsedMessage
 }
 
-func parseUserPartMessage(message *ircMessage) Message {
+func parseUserPartMessage(message *IrcMessage) Message {
 	parsedMessage := UserPartMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -445,7 +445,7 @@ func parseUserPartMessage(message *ircMessage) Message {
 	return &parsedMessage
 }
 
-func parseReconnectMessage(message *ircMessage) Message {
+func parseReconnectMessage(message *IrcMessage) Message {
 	return &ReconnectMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -453,7 +453,7 @@ func parseReconnectMessage(message *ircMessage) Message {
 	}
 }
 
-func parseNamesMessage(message *ircMessage) Message {
+func parseNamesMessage(message *IrcMessage) Message {
 	parsedMessage := NamesMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -468,7 +468,7 @@ func parseNamesMessage(message *ircMessage) Message {
 	return &parsedMessage
 }
 
-func parsePingMessage(message *ircMessage) Message {
+func parsePingMessage(message *IrcMessage) Message {
 	parsedMessage := PingMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -482,7 +482,7 @@ func parsePingMessage(message *ircMessage) Message {
 	return &parsedMessage
 }
 
-func parsePongMessage(message *ircMessage) Message {
+func parsePongMessage(message *IrcMessage) Message {
 	parsedMessage := PongMessage{
 		Raw:     message.Raw,
 		Type:    parseMessageType(message.Command),
@@ -581,7 +581,7 @@ L:
 	return emotes
 }
 
-func parseEmoteSets(message *ircMessage) []string {
+func parseEmoteSets(message *IrcMessage) []string {
 	_, ok := message.Tags["emote-sets"]
 	if !ok {
 		return []string{}

@@ -9,22 +9,22 @@ import (
 // Maximum supported length of an irc message
 const maxMessageLength = 510
 
-type ircMessage struct {
+type IrcMessage struct {
 	Raw     string
 	Tags    map[string]string
-	Source  ircMessageSource
+	Source  IrcMessageSource
 	Command string
 	Params  []string
 }
 
-type ircMessageSource struct {
+type IrcMessageSource struct {
 	Nickname string
 	Username string
 	Host     string
 }
 
-func parseIRCMessage(line string) (*ircMessage, error) {
-	message := ircMessage{
+func ParseIRCMessage(line string) (*IrcMessage, error) {
+	message := IrcMessage{
 		Raw:    line,
 		Tags:   make(map[string]string),
 		Params: []string{},
@@ -120,8 +120,8 @@ func parseIRCTagValue(rawValue string) string {
 	return rawValue
 }
 
-func parseIRCMessageSource(rawSource string) *ircMessageSource {
-	var source ircMessageSource
+func parseIRCMessageSource(rawSource string) *IrcMessageSource {
+	var source IrcMessageSource
 
 	rawSource = strings.TrimPrefix(rawSource, ":")
 
